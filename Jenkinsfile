@@ -5,6 +5,8 @@ pipeline {
         IMAGE_NAME = "myapp"
         IMAGE_TAG = "latest"
     }
+
+    stages {
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/your/repo.git', branch: 'main'
@@ -21,7 +23,6 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Running tests...'
-                // Simulate testing
                 sh 'echo "All tests passed!"'
             }
         }
@@ -29,9 +30,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying application...'
-                // Simulate deployment
                 sh 'docker run -d -p 8081:80 $IMAGE_NAME:$IMAGE_TAG'
             }
         }
+    }
 }
-
