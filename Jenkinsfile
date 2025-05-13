@@ -5,6 +5,7 @@ pipeline {
         IMAGE_NAME = "myapp"
         IMAGE_TAG = "latest"
         APP_PORT = "8081"
+        CONTAINER_NAME = "myapp-container"
     }
 
     stages {
@@ -32,16 +33,15 @@ pipeline {
             steps {
                 echo 'Deploying application...'
                 sh '''
-                    # Find and stop container using port $APP_PORT if any
-                    CONTAINER_ID=$(docker ps -q --filter "publish=$APP_PORT")
-                    if [ ! -z "$CONTAINER_ID" ]; then
-                        echo "Stopping existing container on port $APP_PORT..."
-                        docker stop $CONTAINER_ID
-                        docker rm $CONTAINER_ID
+                    # Stop and remove existing container if it exists
+                    if [ $(docker ps -aq -f name=$CONTAINER_NAME) ]; then
+                        echo "Stopping and removing existing container: $CONTAINER_NAME"
+                        docker stop $CONTAINER_NAME
+                        docker rm $CONTAINER_NAME
                     fi
 
-                    # Run new container
-                    docker run -d -p $APP_PORT:80 $IMAGE_NAME:$IMAGE_TAG
+                    # Run new container with specific name
+                    docker run -d --name $CONTAINER_NAME -p $APP_PORT:80 $IMAGE_NAME:$IMAGE_TAG
                 '''
             }
         }
