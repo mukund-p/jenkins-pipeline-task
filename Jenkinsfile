@@ -5,11 +5,9 @@ pipeline {
         IMAGE_NAME = "myapp"
         IMAGE_TAG = "latest"
     }
-
-    stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/mukund-p/jenkins-pipeline-task.git'
+                git url: 'https://github.com/your/repo.git', branch: 'main'
             }
         }
 
