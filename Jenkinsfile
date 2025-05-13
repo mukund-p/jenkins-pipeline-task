@@ -30,20 +30,27 @@ pipeline {
         }
 
         stage('Deploy') {
-            steps {
-                echo 'Deploying application...'
-                sh '''
-                    # Stop and remove existing container if it exists
-                    if [ $(docker ps -aq -f name=$CONTAINER_NAME) ]; then
-                        echo "Stopping and removing existing container: $CONTAINER_NAME"
-                        docker stop $CONTAINER_NAME
-                        docker rm $CONTAINER_NAME
-                    fi
+    steps {
+        echo 'Deploying application...'
+        sh '''
+            echo "Cleaning up existing container with name $CONTAINER_NAME if it exists..."
+            if [ $(docker ps -aq -f name=$CONTAINER_NAME) ]; then
+                docker stop $CONTAINER_NAME
+                docker rm $CONTAINER_NAME
+            fi
 
-                    # Run new container with specific name
-                    docker run -d --name $CONTAINER_NAME -p $APP_PORT:80 $IMAGE_NAME:$IMAGE_TAG
-                '''
+            echo "Checking for any container using port $APP_PORT..."
+            PORT_IN_USE=$(docker ps --filter "publish=$APP_PORT" -q)
+            if [ ! -z "$PORT_IN_USE" ]; then
+                echo "Port $APP_PORT is in use by container: $PORT_IN_USE. Stopping and removing it..."
+                docker stop $PORT_IN_USE
+                docker rm $PORT_IN_USE
+            fi
+
+            echo "Running new container..."
+            docker run -d --name $CONTAINER_NAME -p $APP_PORT:80 $IMAGE_NAME:$IMAGE_TAG
+        '''
             }
         }
-    }
+   }
 }
