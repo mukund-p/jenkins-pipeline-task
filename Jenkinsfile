@@ -33,6 +33,5 @@ pipeline {
                 sh 'docker run -d -p 8081:80 $IMAGE_NAME:$IMAGE_TAG'
             }
         }
-    }
 }
 
