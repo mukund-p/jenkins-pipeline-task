@@ -5,9 +5,11 @@ This project demonstrates a simple CI/CD pipeline using Jenkins and Docker. It a
 
 ## Project Structure
 
+├── screenshots/ <br>
 ├── Dockerfile <br>
 ├── Jenkinsfile <br>
-└── index.html
+├── index.html <br>
+└── README.md
 
 - Dockerfile: Defines the Docker image, using Nginx to serve the static index.html.
 - Jenkinsfile: Contains the Jenkins pipeline configuration.
